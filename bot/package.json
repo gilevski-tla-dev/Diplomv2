@@ -1,0 +1,24 @@
+{
+  "name": "bot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node dist/main.js",
+    "build": "tsc",
+    "dev": "node --loader ts-node/esm src/main.ts",
+    "start:prod": "yarn build && yarn start"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "telegraf": "^4.16.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2"
+  }
+}
