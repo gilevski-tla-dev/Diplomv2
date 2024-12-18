@@ -1,5 +1,5 @@
 import {
-  createHashRouter,
+  createBrowserRouter,
   createRoutesFromElements,
   Route,
   RouterProvider,
@@ -14,7 +14,7 @@ export const AppRouter = () => {
     </Route>
   );
 
-  const router = createHashRouter(routers, {});
+  const router = createBrowserRouter(routers, {});
 
   return (
     <div>
