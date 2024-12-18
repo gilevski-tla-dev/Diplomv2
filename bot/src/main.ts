@@ -11,7 +11,7 @@ bot.command("start", (ctx) => {
         [
           {
             text: "Открыть Web App", // Текст на кнопке
-            web_app: { url: "https://your-webapp-url.com" }, // URL вашего веб-приложения
+            web_app: { url: "https://18k96j0z-5173.euw.devtunnels.ms/" }, // URL вашего веб-приложения
           },
         ],
       ],

@@ -5,11 +5,10 @@ FROM node:18
 WORKDIR /backend
 
 # Копируем только package.json и yarn.lock для установки зависимостей
-# Это позволит избежать повторной установки, если зависимости не меняются
 COPY package.json yarn.lock ./
 
 # Устанавливаем зависимости
-RUN yarn install --frozen-lockfile
+RUN yarn install
 
 # Копируем весь исходный код
 COPY . .

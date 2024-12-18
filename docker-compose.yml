@@ -14,6 +14,17 @@ services:
       - NODE_ENV=development
       - DATABASE_URL=postgresql://user:password@db:5432/nestdb
 
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/frontend
+      - /frontend/node_modules
+
   bot:
     build:
       context: ./bot
