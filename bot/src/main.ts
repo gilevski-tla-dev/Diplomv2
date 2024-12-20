@@ -1,7 +1,16 @@
 import { Telegraf } from "telegraf";
+import dotenv from "dotenv";
 
-// Создайте экземпляр бота с токеном
-const bot = new Telegraf("5821534037:AAGGxevje9-Qlf4PSh6TeIjPWFiEWzrrXC0");
+dotenv.config(); // Загружаем переменные из .env
+
+const webAppUrl = "https://30e7-79-137-197-63.ngrok-free.app";
+const botToken = process.env.BOT_TOKEN;
+
+if (!botToken) {
+  throw new Error("BOT_TOKEN не указан в .env");
+}
+
+const bot = new Telegraf(botToken);
 
 // Обработчик команды /start
 bot.command("start", (ctx) => {
@@ -10,10 +19,8 @@ bot.command("start", (ctx) => {
       inline_keyboard: [
         [
           {
-            text: "Открыть Web App", // Текст на кнопке
-            web_app: {
-              url: "https://30e7-79-137-197-63.ngrok-free.app",
-            }, // URL вашего веб-приложения
+            text: "Открыть Web App",
+            web_app: { url: webAppUrl },
           },
         ],
       ],
@@ -24,4 +31,4 @@ bot.command("start", (ctx) => {
 // Запуск бота
 bot.launch();
 
-console.log("Бот запущен!");
+console.log("Бот запущен! URL Web App:", webAppUrl);
