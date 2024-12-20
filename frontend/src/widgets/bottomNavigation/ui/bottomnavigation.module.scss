@@ -21,12 +21,24 @@
     color: #a2acb0;
     width: 82px;
     cursor: pointer;
+    transition: color 0.3s ease, background-color 0.3s ease; /* Плавный переход для цвета и фона */
 
-    img {
-      width: 28px;
+    .image {
+      display: flex;
+      width: 64px;
       height: 28px;
-      filter: brightness(0) saturate(100%) invert(73%) sepia(15%) saturate(152%)
-        hue-rotate(151deg) brightness(92%) contrast(86%);
+      justify-content: center;
+      align-items: center;
+      border-radius: 35px;
+      transition: background-color 0.3s ease; /* Плавное изменение фона иконки */
+
+      img {
+        width: 28px;
+        height: 28px;
+        filter: brightness(0) saturate(100%) invert(73%) sepia(15%)
+          saturate(152%) hue-rotate(151deg) brightness(92%) contrast(86%);
+        transition: filter 0.3s ease; /* Плавное изменение цвета иконки */
+      }
     }
 
     p {
@@ -42,9 +54,13 @@
   .active {
     color: #007aff;
 
-    img {
-      filter: brightness(0) saturate(100%) invert(35%) sepia(96%)
-        saturate(3741%) hue-rotate(201deg) brightness(102%) contrast(106%);
+    .image {
+      background-color: #4378ff10;
+
+      img {
+        filter: brightness(0) saturate(100%) invert(35%) sepia(96%)
+          saturate(3741%) hue-rotate(201deg) brightness(102%) contrast(106%);
+      }
     }
   }
 }

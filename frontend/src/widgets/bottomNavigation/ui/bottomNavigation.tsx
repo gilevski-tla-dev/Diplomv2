@@ -3,45 +3,39 @@ import styles from "./bottomnavigation.module.scss";
 import profileIcon from "@/assets/profile_icon.svg";
 import topSurveys from "@/assets/top_surveys.svg";
 import mySurvey from "@/assets/my_survey.svg";
+import { useNavigate } from "react-router-dom";
+
+const buttons = [
+  { name: "topSurveys", label: "Лента опросов", icon: topSurveys, path: "/" },
+  { name: "mySurvey", label: "Мои опросы", icon: mySurvey, path: "/" },
+  { name: "profile", label: "Профиль", icon: profileIcon, path: "/profile" },
+];
 
 export const BottomNavigation = () => {
   const [activeButton, setActiveButton] = useState<string>("");
+  const navigate = useNavigate();
 
-  const handleClick = (buttonName: string) => {
-    setActiveButton(buttonName);
+  const handleClick = (name: string, path: string) => {
+    setActiveButton(name);
+    navigate(path);
   };
 
   return (
     <div className={styles.wrapper}>
-      <div
-        className={`${styles.button} ${
-          activeButton === "topSurveys" ? styles.active : ""
-        }`}
-        onClick={() => handleClick("topSurveys")}
-      >
-        <img src={topSurveys} alt="topSurveys" />
-        <p>Лента опросов</p>
-      </div>
-
-      <div
-        className={`${styles.button} ${
-          activeButton === "mySurvey" ? styles.active : ""
-        }`}
-        onClick={() => handleClick("mySurvey")}
-      >
-        <img src={mySurvey} alt="mySurvey" />
-        <p>Мои опросы</p>
-      </div>
-
-      <div
-        className={`${styles.button} ${
-          activeButton === "profile" ? styles.active : ""
-        }`}
-        onClick={() => handleClick("profile")}
-      >
-        <img src={profileIcon} alt="profile" />
-        <p>Профиль</p>
-      </div>
+      {buttons.map(({ name, label, icon, path }) => (
+        <div
+          key={name}
+          className={`${styles.button} ${
+            activeButton === name ? styles.active : ""
+          }`}
+          onClick={() => handleClick(name, path)}
+        >
+          <div className={styles.image}>
+            <img src={icon} alt={name} />
+          </div>
+          <p>{label}</p>
+        </div>
+      ))}
     </div>
   );
 };
