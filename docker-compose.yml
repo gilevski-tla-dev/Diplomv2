@@ -13,6 +13,10 @@ services:
     environment:
       - NODE_ENV=development
       - DATABASE_URL=postgresql://user:password@db:5432/nestdb
+    depends_on:
+      - db
+    networks:
+      - backend_network
 
   frontend:
     build:
@@ -24,6 +28,8 @@ services:
     volumes:
       - ./frontend:/frontend
       - /frontend/node_modules
+    networks:
+      - backend_network
 
   bot:
     build:
@@ -39,6 +45,8 @@ services:
     volumes:
       - ./bot:/bot
       - /bot/node_modules
+    networks:
+      - backend_network
 
   db:
     image: postgres:15
@@ -52,6 +60,8 @@ services:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
       POSTGRES_DB: nestdb
+    networks:
+      - backend_network
 
   pgadmin:
     image: dpage/pgadmin4
@@ -62,6 +72,12 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@example.com
       PGADMIN_DEFAULT_PASSWORD: admin
+    networks:
+      - backend_network
 
 volumes:
   db_data:
+
+networks:
+  backend_network:
+    driver: bridge
