@@ -1,12 +1,12 @@
 # Используем Node.js 18 как базовый образ
-FROM node:18
+FROM node:20
 
 # Устанавливаем рабочую директорию
 WORKDIR /frontend
 
 # Копируем только package.json и yarn.lock для установки зависимостей
 # Это позволит избежать повторной установки, если зависимости не меняются
-COPY package.json ./
+COPY package.json yarn.lock ./
 
 # Устанавливаем зависимости
 RUN yarn install --frozen-lockfile

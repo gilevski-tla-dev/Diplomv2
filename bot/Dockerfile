@@ -5,14 +5,16 @@ FROM node:18
 WORKDIR /bot
 
 # Копируем только package.json и yarn.lock для установки зависимостей
-# Это позволит избежать повторной установки, если зависимости не меняются
-COPY package.json ./
+COPY package.json yarn.lock ./
 
-# Устанавливаем зависимости
+# Устанавливаем все зависимости (включая devDependencies)
 RUN yarn install --frozen-lockfile
 
 # Копируем весь исходный код
 COPY . .
+
+# Проверяем наличие `tsc`
+RUN npx tsc --version
 
 # Собираем приложение
 RUN yarn build

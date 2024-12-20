@@ -9,7 +9,9 @@ bot.command("start", (ctx) => {
                 [
                     {
                         text: "Открыть Web App", // Текст на кнопке
-                        web_app: { url: "https://your-webapp-url.com" }, // URL вашего веб-приложения
+                        web_app: {
+                            url: "https://1575-79-137-197-63.ngrok-free.app/profile",
+                        }, // URL вашего веб-приложения
                     },
                 ],
             ],

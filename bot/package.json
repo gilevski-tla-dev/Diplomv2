@@ -4,20 +4,22 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "build": "npx tsc",
     "start": "node dist/main.js",
-    "build": "tsc",
-    "dev": "node --loader ts-node/esm src/main.ts",
-    "start:prod": "yarn build && yarn start"
+    "start:prod": "yarn build && yarn start",
+    "dev": "nodemon --watch src --exec node --loader ts-node/esm src/main.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "telegraf": "^4.16.3"
+    "telegraf": "^4.16.3",
+    "typescript": "^5.7.2"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
+    "nodemon": "^3.1.9",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.2"
   }
