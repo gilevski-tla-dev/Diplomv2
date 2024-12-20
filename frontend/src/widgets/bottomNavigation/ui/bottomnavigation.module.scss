@@ -7,6 +7,10 @@
   display: flex;
   background-color: #fff;
   z-index: 10;
+  justify-content: space-between;
+  box-sizing: border-box;
+  padding-left: 35px;
+  padding-right: 35px;
 
   .button {
     display: flex;
@@ -15,11 +19,32 @@
     justify-content: center;
     gap: 6px;
     color: #a2acb0;
+    width: 82px;
+    cursor: pointer;
+
+    img {
+      width: 28px;
+      height: 28px;
+      filter: brightness(0) saturate(100%) invert(73%) sepia(15%) saturate(152%)
+        hue-rotate(151deg) brightness(92%) contrast(86%);
+    }
 
     p {
       font-weight: 600;
       font-size: 13px;
       letter-spacing: 0.1px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  .active {
+    color: #007aff;
+
+    img {
+      filter: brightness(0) saturate(100%) invert(35%) sepia(96%)
+        saturate(3741%) hue-rotate(201deg) brightness(102%) contrast(106%);
     }
   }
 }
