@@ -1,0 +1,1 @@
+![Архитектура Backend](image.png)

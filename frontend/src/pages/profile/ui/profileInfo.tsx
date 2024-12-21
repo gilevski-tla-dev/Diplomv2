@@ -1,19 +1,25 @@
 import { useEffect, useState } from "react";
 import styles from "./styles/profileinfo.module.scss";
-import { getUserData, User } from "../model/user";
+import { User } from "../model/user";
+import { getUserData } from "../model/getUserData";
+import { useCreateUser } from "../services/userService"; 
 
 export const ProfileInfo = () => {
   const [user, setUser] = useState<User | null>(null);
+  const { mutate: createUser } = useCreateUser(); 
 
   useEffect(() => {
     const userData = getUserData();
 
     if (userData) {
       setUser(userData);
+
+      // Отправка данных пользователя на сервер при их получении
+      createUser(userData);
     } else {
       console.error("Ошибка авторизации: нет данных о пользователе");
     }
-  }, []);
+  }, [createUser]);
 
   if (!user) {
     return <div>Загрузка...</div>;
