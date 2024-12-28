@@ -1,9 +1,9 @@
 import { Telegraf } from "telegraf";
 import dotenv from "dotenv";
 
-dotenv.config({ path: "../../.env" }); // Указываем путь к .env
+dotenv.config({ path: "../.env" }); // Указываем путь к .env
 
-const webAppUrl = "https://1a6d-159-203-166-119.ngrok-free.app";
+const webAppUrl = "https://3a4e-109-237-6-241.ngrok-free.app";
 const botToken = process.env.BOT_TOKEN;
 
 if (!botToken) {

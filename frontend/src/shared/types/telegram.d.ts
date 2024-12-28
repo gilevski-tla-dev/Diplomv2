@@ -1,22 +1,19 @@
 // telegram.d.ts
 
+import { User } from "./user";
+
 interface TelegramWebApp {
   ready(): void;
   initDataUnsafe: {
-    user?: {
-      first_name: string;
-      last_name?: string;
-      username?: string;
-      photo_url?: string;
-      language_code: string;
-    };
+    user?: User;
   };
+  initData: string;
   WebApp: TelegramWebApp;
 }
 
 declare global {
   interface Window {
-    Telegram: TelegramWebApp; // Расширяем тип Window
+    Telegram: TelegramWebApp; // Расширяем тип Window для Telegram WebApp
   }
 }
 

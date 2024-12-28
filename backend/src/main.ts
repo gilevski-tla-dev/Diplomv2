@@ -1,9 +1,15 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import * as dotenv from 'dotenv';
+
+dotenv.config({ path: '../.env' });
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.setGlobalPrefix('api');
-  await app.listen(process.env.PORT ?? 3000);
+
+  const port = process.env.PORT;
+  await app.listen(port);
+
+  console.log(`http://localhost:${port}`);
 }
 bootstrap();

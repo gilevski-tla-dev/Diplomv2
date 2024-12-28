@@ -1,25 +1,20 @@
 import { useEffect, useState } from "react";
 import styles from "./styles/profileinfo.module.scss";
-import { User } from "../model/user";
-import { getUserData } from "../model/getUserData";
-import { useCreateUser } from "../services/userService"; 
+import { getInitDataUnsafe } from "@/features/authProvider/model/getInitData";
+import { User } from "@/shared/types/user";
 
 export const ProfileInfo = () => {
   const [user, setUser] = useState<User | null>(null);
-  const { mutate: createUser } = useCreateUser(); 
 
   useEffect(() => {
-    const userData = getUserData();
+    const userData = getInitDataUnsafe();
 
-    if (userData) {
-      setUser(userData);
-
-      // Отправка данных пользователя на сервер при их получении
-      createUser(userData);
+    if (userData?.user) {
+      setUser(userData.user);
     } else {
       console.error("Ошибка авторизации: нет данных о пользователе");
     }
-  }, [createUser]);
+  }, []);
 
   if (!user) {
     return <div>Загрузка...</div>;
@@ -31,7 +26,7 @@ export const ProfileInfo = () => {
         {user.photo_url ? (
           <img src={user.photo_url} alt="Avatar" />
         ) : (
-          <img src="" alt="" />
+          <img src="" alt="No Avatar" />
         )}
       </div>
       <div className={styles.info}>
