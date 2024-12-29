@@ -18,6 +18,8 @@ export const AppRouter = () => {
     initializeApp(dispatch);
   }, [dispatch]);
 
+  // TODO разобраться со слайсом Auth
+
   const routes = createRoutesFromElements(
     <Route path="/" element={<Layout />}>
       <Route path="/profile" element={<Profile />} />
