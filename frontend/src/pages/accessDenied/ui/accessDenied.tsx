@@ -1,5 +1,5 @@
 export const AccessDenied = () => {
-  return <div>dsadasd</div>;
+  return <>Зайдите через телеграм</>;
 };
 
 export default AccessDenied;

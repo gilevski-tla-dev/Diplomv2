@@ -1,15 +1,17 @@
 import {
   createBrowserRouter,
-  createRoutesFromElements,
-  Route,
   RouterProvider,
+  Navigate,
+  Outlet,
 } from "react-router-dom";
 import { Layout } from "../layout";
 import { Profile } from "@/pages/profile";
+import { MyPolls } from "@/pages/myPolls";
 import { AccessDenied } from "@/pages/accessDenied";
 import { useDispatch } from "react-redux";
 import { initializeApp } from "@/features/authProvider/utils/initApp";
 import { useEffect } from "react";
+import { ProtectedRoute } from "./protectedRoute";
 
 export const AppRouter = () => {
   const dispatch = useDispatch();
@@ -18,16 +20,27 @@ export const AppRouter = () => {
     initializeApp(dispatch);
   }, [dispatch]);
 
-  // TODO разобраться со слайсом Auth
-
-  const routes = createRoutesFromElements(
-    <Route path="/" element={<Layout />}>
-      <Route path="/profile" element={<Profile />} />
-      <Route path="/access_denied" element={<AccessDenied />} />
-    </Route>
-  );
-
-  const router = createBrowserRouter(routes);
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: <Layout />,
+      children: [
+        { index: true, element: <Navigate to="/profile" replace /> },
+        {
+          element: (
+            <ProtectedRoute>
+              <Outlet />
+            </ProtectedRoute>
+          ),
+          children: [
+            { path: "/profile", element: <Profile /> },
+            { path: "/my_polls", element: <MyPolls /> },
+          ],
+        },
+      ],
+    },
+    { path: "/access_denied", element: <AccessDenied /> },
+  ]);
 
   return <RouterProvider router={router} />;
 };

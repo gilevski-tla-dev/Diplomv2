@@ -2,21 +2,26 @@ import { setErrorMessage, setAuthStatus } from "@/app/store/authSlice";
 import { checkUser } from "../api/users";
 import { Dispatch } from "redux";
 
-// Определяем тип для ответа от `checkUser`
 interface CheckUserResponse {
-  userId: string;
-  username: string;
-  isAuthenticated: boolean;
+  success: boolean; // Признак успешной аутентификации
+  message: string; // Сообщение от сервера
+  username: string; // Имя пользователя
+  tgId: number; // Telegram ID пользователя
 }
 
-// Получаем initData и отправляем запрос
+import { setLoading } from "@/app/store/authSlice";
+
 export const initializeApp = async (dispatch: Dispatch): Promise<void> => {
   const tg = window.Telegram?.WebApp;
+
+  // Начало загрузки
+  dispatch(setLoading(true));
 
   if (!tg) {
     const errorMessage = "Telegram WebApp SDK не доступен";
     console.error(errorMessage);
     dispatch(setErrorMessage(errorMessage));
+    dispatch(setLoading(false)); // Завершаем загрузку
     return;
   }
 
@@ -27,13 +32,19 @@ export const initializeApp = async (dispatch: Dispatch): Promise<void> => {
     const errorMessage = "Ошибка: initData отсутствует";
     console.error(errorMessage);
     dispatch(setErrorMessage(errorMessage));
+    dispatch(setLoading(false)); // Завершаем загрузку
     return;
   }
 
   try {
-    // Указываем тип возвращаемого значения для `checkUser`
     const response: CheckUserResponse = await checkUser(initData);
-    dispatch(setAuthStatus(response.isAuthenticated));
+    console.log("Ответ от checkUser:", response);
+
+    if (response.success) {
+      dispatch(setAuthStatus(true));
+    } else {
+      dispatch(setAuthStatus(false));
+    }
   } catch (error) {
     console.error("Ошибка при проверке пользователя:", error);
 
@@ -43,5 +54,8 @@ export const initializeApp = async (dispatch: Dispatch): Promise<void> => {
 
     dispatch(setAuthStatus(false));
     dispatch(setErrorMessage(errorMessage));
+  } finally {
+    // Завершаем загрузку
+    dispatch(setLoading(false));
   }
 };

@@ -1,22 +1,20 @@
-import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import styles from "./bottomnavigation.module.scss";
 import profileIcon from "@/assets/profile_icon.svg";
 import topSurveys from "@/assets/top_surveys.svg";
 import mySurvey from "@/assets/my_survey.svg";
-import { useNavigate } from "react-router-dom";
 
 const buttons = [
-  { name: "topSurveys", label: "Лента опросов", icon: topSurveys, path: "/" },
-  { name: "mySurvey", label: "Мои опросы", icon: mySurvey, path: "/" },
+  { name: "topPolls", label: "Лента опросов", icon: topSurveys, path: "/" },
+  { name: "myPolls", label: "Мои опросы", icon: mySurvey, path: "/my_polls" },
   { name: "profile", label: "Профиль", icon: profileIcon, path: "/profile" },
 ];
 
 export const BottomNavigation = () => {
-  const [activeButton, setActiveButton] = useState<string>("");
+  const location = useLocation();
   const navigate = useNavigate();
 
-  const handleClick = (name: string, path: string) => {
-    setActiveButton(name);
+  const handleClick = (path: string) => {
     navigate(path);
   };
 
@@ -26,9 +24,9 @@ export const BottomNavigation = () => {
         <div
           key={name}
           className={`${styles.button} ${
-            activeButton === name ? styles.active : ""
+            location.pathname === path ? styles.active : ""
           }`}
-          onClick={() => handleClick(name, path)}
+          onClick={() => handleClick(path)}
         >
           <div className={styles.image}>
             <img src={icon} alt={name} />

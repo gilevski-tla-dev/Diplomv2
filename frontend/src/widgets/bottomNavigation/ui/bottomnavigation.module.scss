@@ -5,7 +5,7 @@
   width: 100vw;
   height: 82px;
   display: flex;
-  background-color: #fff;
+  background-color: $white;
   z-index: 10;
   justify-content: space-between;
   box-sizing: border-box;
@@ -18,7 +18,7 @@
     align-items: center;
     justify-content: center;
     gap: 6px;
-    color: #a2acb0;
+    color: $foreign-grey;
     width: 82px;
     cursor: pointer;
     transition: color 0.3s ease, background-color 0.3s ease; /* Плавный переход для цвета и фона */
@@ -52,10 +52,10 @@
   }
 
   .active {
-    color: #007aff;
+    color: $primary-color;
 
     .image {
-      background-color: #4378ff10;
+      background-color: $foreign-blue;
 
       img {
         filter: brightness(0) saturate(100%) invert(35%) sepia(96%)
