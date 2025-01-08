@@ -1,67 +1,107 @@
-import { Controller, Post, Query, BadRequestException } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Query,
+  BadRequestException,
+  ForbiddenException,
+  Logger,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
 import * as crypto from 'crypto';
 import { UserService } from '../user/user.service';
 
 @Controller('telegram')
 export class TelegramController {
+  private readonly logger = new Logger(TelegramController.name);
+
   constructor(private readonly userService: UserService) {}
 
   @Post('init')
+  @HttpCode(HttpStatus.CREATED) // Устанавливаем статус 201 для успешного создания
   async initData(@Query() query: any) {
     const botToken = '5821534037:AAGGxevje9-Qlf4PSh6TeIjPWFiEWzrrXC0';
 
-    if (!query.hash || !query.auth_date) {
-      throw new BadRequestException('Missing required parameters');
+    // Проверяем наличие обязательных параметров
+    this.validateQueryParams(query);
+
+    // Проверяем корректность хэша
+    this.validateHash(query, botToken);
+
+    // Проверяем срок действия данных
+    this.validateAuthDate(query.auth_date);
+
+    // Разбираем данные пользователя
+    const user = query.user ? JSON.parse(query.user) : null;
+
+    if (!user?.first_name) {
+      throw new ForbiddenException('Access Denied: Invalid user data');
     }
 
-    // Формирование строки для проверки
+    // Логирование данных пользователя
+    this.logger.log(`User data: ${JSON.stringify(user)}`);
+
+    // Обрабатываем пользователя
+    return await this.processUser(user);
+  }
+
+  private validateQueryParams(query: any) {
+    if (!query.hash || !query.auth_date) {
+      this.logger.error('Missing required parameters');
+      throw new ForbiddenException(
+        'Access Denied: Missing required parameters',
+      );
+    }
+  }
+
+  private validateHash(query: any, botToken: string) {
     const dataCheckString = Object.keys(query)
       .filter((key) => key !== 'hash')
       .sort()
       .map((key) => `${key}=${query[key]}`)
       .join('\n');
 
-    // Генерация секретного ключа
     const secretKey = crypto
       .createHmac('sha256', 'WebAppData')
       .update(botToken)
       .digest();
 
-    // Вычисление хэша
     const computedHash = crypto
       .createHmac('sha256', secretKey)
       .update(dataCheckString)
       .digest('hex');
 
-    // Проверка хэша
     if (computedHash !== query.hash) {
-      throw new BadRequestException('Invalid hash');
+      this.logger.error('Invalid hash');
+      throw new ForbiddenException('Access Denied: Invalid hash');
     }
+  }
 
-    // Проверка устаревания данных
+  private validateAuthDate(authDate: string) {
     const now = Math.floor(Date.now() / 1000);
-    const authDate = parseInt(query.auth_date, 10);
-    if (now - authDate > 86400) {
-      throw new BadRequestException('Request expired');
+    const authDateInt = parseInt(authDate, 10);
+
+    if (now - authDateInt > 86400) {
+      this.logger.warn('Request expired');
+      throw new ForbiddenException('Access Denied: Request expired');
     }
+  }
 
-    // Разбор данных пользователя
-    const user = query.user ? JSON.parse(query.user) : null;
-
-    if (!user || !user.first_name) {
-      throw new BadRequestException(
-        'Invalid user data: first_name is required',
-      );
-    }
-
+  private async processUser(user: any) {
     try {
-      // Проверяем, существует ли пользователь
       const existingUser = await this.userService.findUserByTelegramId(user.id);
       if (existingUser) {
-        return { success: true, message: 'User already exists' };
+        this.logger.log(`User with id ${user.id} already exists`);
+        // Если пользователь существует, возвращаем данные с кодом 200
+        return {
+          success: true,
+          message: 'User already exists',
+          username: existingUser.username,
+          tgId: existingUser.telegramId,
+        };
       }
 
-      // Создаём нового пользователя
+      // Создаем нового пользователя
       await this.userService.createUser({
         id: user.id,
         first_name: user.first_name,
@@ -72,8 +112,16 @@ export class TelegramController {
         photo_url: user.photo_url,
       });
 
-      return { success: true, message: 'User created successfully' };
+      this.logger.log(`User with id ${user.id} created successfully`);
+      // Возвращаем данные с кодом 201
+      return {
+        success: true,
+        message: 'User created successfully',
+        username: user.username,
+        tgId: user.id,
+      };
     } catch (error) {
+      this.logger.error('Error processing user', error.stack);
       throw new BadRequestException(error.message || 'An error occurred');
     }
   }

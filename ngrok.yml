@@ -1,0 +1,10 @@
+version: 2
+authtoken: 1tibIHTICKabecUhOvT6p5FrNMo_6ACitej3g98bB3h94KNhr
+
+tunnels:
+  frontend:
+    proto: http
+    addr: 5173
+  backend:
+    proto: http
+    addr: 5000
