@@ -3,10 +3,10 @@ import { checkUser } from "../api/users";
 import { Dispatch } from "redux";
 
 interface CheckUserResponse {
-  success: boolean; // Признак успешной аутентификации
-  message: string; // Сообщение от сервера
-  username: string; // Имя пользователя
-  tgId: number; // Telegram ID пользователя
+  success: boolean;
+  message: string;
+  username: string;
+  tgId: number;
 }
 
 import { setLoading } from "@/app/store/authSlice";
