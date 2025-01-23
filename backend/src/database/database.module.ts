@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as dotenv from 'dotenv';
-import { User } from './user.entity';
+import { User } from '../modules/user/entities/user.entity';
 
 dotenv.config({ path: '../.env' });
 
