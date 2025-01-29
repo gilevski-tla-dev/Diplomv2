@@ -1,12 +1,10 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/modules/user/entities/user.entity';
 import { Repository } from 'typeorm';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
-  private readonly logger = new Logger(UserService.name);
-
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
@@ -17,12 +15,6 @@ export class UserService {
   }
 
   async createUser(userData: any): Promise<User> {
-    this.validateUserData(userData);
-
-    // Проверяем, что пользователь не существует
-    await this.ensureUserDoesNotExist(userData.id);
-
-    // Создаём нового пользователя
     const user = this.userRepository.create({
       telegramId: userData.id,
       firstName: userData.first_name,
@@ -33,31 +25,6 @@ export class UserService {
       photoUrl: userData.photo_url,
     });
 
-    return await this.saveUser(user);
-  }
-
-  private validateUserData(userData: any) {
-    if (!userData.id || !userData.first_name) {
-      this.logger.error('Required user data is missing');
-      throw new Error('Required user data is missing');
-    }
-  }
-
-  private async ensureUserDoesNotExist(telegramId: number) {
-    const existingUser = await this.findUserByTelegramId(telegramId);
-    if (existingUser) {
-      this.logger.error(`User with telegramId ${telegramId} already exists`);
-      throw new Error('User already exists');
-    }
-  }
-
-  private async saveUser(user: User): Promise<User> {
-    try {
-      this.logger.log(`Saving user with telegramId ${user.telegramId}`);
-      return await this.userRepository.save(user);
-    } catch (error) {
-      this.logger.error('Error saving user', error.stack);
-      throw new Error('Failed to save user');
-    }
+    return await this.userRepository.save(user);
   }
 }

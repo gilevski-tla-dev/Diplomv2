@@ -1,5 +1,4 @@
-import { Survey } from 'src/modules/surveys/entities/survey';
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity()
 export class User {
@@ -26,7 +25,4 @@ export class User {
 
   @Column({ nullable: true })
   photoUrl: string;
-
-  @OneToMany(() => Survey, (survey) => survey.owner)
-  surveys: Survey[];
 }

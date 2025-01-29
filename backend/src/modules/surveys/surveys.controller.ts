@@ -1,24 +1,13 @@
-import { Controller, Post, Body, Get, Req, UseGuards } from '@nestjs/common';
-import { SurveysService } from './surveys.service';
-import { CreateSurveyDto } from './dto/create-survey.dto';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { Request } from 'express';
-import { User } from '../auth/entities/user.entity';
+import { Controller, Post, Body } from '@nestjs/common';
+import { SurveyService } from './surveys.service';
 
 @Controller('surveys')
-@UseGuards(JwtAuthGuard)
-export class SurveysController {
-  constructor(private readonly surveysService: SurveysService) {}
+export class SurveyController {
+  constructor(private readonly surveyService: SurveyService) {}
 
   @Post()
-  async create(@Body() createSurveyDto: CreateSurveyDto, @Req() req: Request) {
-    const user = req.user as User;
-    return await this.surveysService.create(createSurveyDto, user);
-  }
-
-  @Get()
-  async findAll(@Req() req: Request) {
-    const user = req.user as User;
-    return await this.surveysService.findAllByOwner(user);
+  async createSurvey(@Body() surveyData: any) {
+    // Убираем зависимость от пользователя и передаем только данные опроса
+    return this.surveyService.createSurvey(surveyData);
   }
 }

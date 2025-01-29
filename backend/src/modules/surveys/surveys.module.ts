@@ -1,17 +1,13 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-
-import { SurveysService } from './surveys.service';
-import { SurveysController } from './surveys.controller';
-import { AnswerOption } from './entities/answer-option';
-import { Question } from './entities/question';
-import { Survey } from './entities/survey';
+import { Survey } from './entities/survey.entity';
+import { Question } from './entities/question.entity';
+import { SurveyController } from './surveys.controller';
+import { SurveyService } from './surveys.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Survey, Question, AnswerOption])],
-  controllers: [SurveysController],
-  providers: [SurveysService],
+  imports: [TypeOrmModule.forFeature([Survey, Question])],
+  providers: [SurveyService],
+  controllers: [SurveyController],
 })
-export class SurveysModule {}
-
-// TODO: Доделать модуль опросов
+export class SurveyModule {}
