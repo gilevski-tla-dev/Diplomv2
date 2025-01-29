@@ -4,8 +4,9 @@ import path from "path";
 
 export default defineConfig({
   server: {
-    host: "0.0.0.0",
+    host: true,
     port: 5173,
+    allowedHosts: ["2578-159-203-166-119.ngrok-free.app"],
   },
   plugins: [react()],
   resolve: {

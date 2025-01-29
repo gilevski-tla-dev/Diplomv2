@@ -3,6 +3,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './jwt.strategy';
+import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { JwtStrategy } from './jwt.strategy';
       secret: 'your_jwt_secret_key', // Замени на свой секретный ключ
       signOptions: { expiresIn: '1h' }, // Токен действителен 1 час
     }),
+    UserModule,
   ],
   providers: [AuthService, JwtStrategy],
   exports: [AuthService, JwtModule],

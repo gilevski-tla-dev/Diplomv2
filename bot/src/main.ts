@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 
 dotenv.config({ path: "../.env" }); // Указываем путь к .env
 
-const webAppUrl = "https://d5ec-159-203-166-119.ngrok-free.app";
+const webAppUrl = "https://2578-159-203-166-119.ngrok-free.app";
 const botToken = process.env.BOT_TOKEN;
 
 if (!botToken) {
