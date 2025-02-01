@@ -12,17 +12,17 @@ export class User {
   firstName: string;
 
   @Column({ nullable: true })
-  lastName: string;
+  lastName: string | null;
 
   @Column({ nullable: true })
-  username: string;
+  username: string | null;
 
   @Column({ nullable: true })
-  languageCode: string;
+  languageCode: string | null;
 
   @Column({ default: true })
   allowsWriteToPm: boolean;
 
   @Column({ nullable: true })
-  photoUrl: string;
+  photoUrl: string | null;
 }

@@ -8,3 +8,4 @@ tunnels:
   backend:
     proto: http
     addr: 5000
+# ngrok start --all --config ngrok.yml

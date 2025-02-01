@@ -1,15 +1,24 @@
 import { Injectable, ForbiddenException, Logger } from '@nestjs/common';
 import * as crypto from 'crypto';
+import { ConfigService } from '@nestjs/config';
 import { UserService } from '../user/user.service';
+import { TelegramQuery } from './interfaces/query.interface';
+import { CreateUserDto } from '../user/dto/create-user.dto';
 
 @Injectable()
 export class TelegramService {
   private readonly logger = new Logger(TelegramService.name);
-  private readonly botToken = '5821534037:AAGGxevje9-Qlf4PSh6TeIjPWFiEWzrrXC0';
+  private readonly botToken: string;
 
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly userService: UserService,
+  ) {
+    // Получаем токен из переменных окружения
+    this.botToken = this.configService.get<string>('TELEGRAM_BOT_TOKEN');
+  }
 
-  validateQueryParams(query: any) {
+  validateQueryParams(query: TelegramQuery) {
     if (!query.hash || !query.auth_date) {
       this.logger.error('Missing required parameters');
       throw new ForbiddenException(
@@ -18,13 +27,12 @@ export class TelegramService {
     }
   }
 
-  validateHash(query: any) {
+  validateHash(query: TelegramQuery) {
     const dataCheckString = Object.keys(query)
       .filter((key) => key !== 'hash')
       .sort()
       .map((key) => `${key}=${query[key]}`)
       .join('\n');
-
     const secretKey = crypto
       .createHmac('sha256', 'WebAppData')
       .update(this.botToken)
@@ -33,7 +41,6 @@ export class TelegramService {
       .createHmac('sha256', secretKey)
       .update(dataCheckString)
       .digest('hex');
-
     if (computedHash !== query.hash) {
       this.logger.error('Invalid hash');
       throw new ForbiddenException('Access Denied: Invalid hash');
@@ -43,32 +50,47 @@ export class TelegramService {
   validateAuthDate(authDate: string) {
     const now = Math.floor(Date.now() / 1000);
     const authDateInt = parseInt(authDate, 10);
-
     if (now - authDateInt > 86400) {
       this.logger.warn('Request expired');
       throw new ForbiddenException('Access Denied: Request expired');
     }
   }
 
-  parseUserData(userData: string) {
+  parseUserData(userData: string): CreateUserDto {
+    if (!userData) {
+      this.logger.error('User data is missing or empty');
+      throw new ForbiddenException('Access Denied: Missing user data');
+    }
     try {
-      const user = userData ? JSON.parse(userData) : null;
-      if (!user?.first_name) {
-        throw new ForbiddenException('Access Denied: Invalid user data');
-      }
-      return user;
+      // Декодируем URL-encoded строку
+      const decodedUserData = decodeURIComponent(userData);
+      // Парсим JSON
+      const user = JSON.parse(decodedUserData);
+      // Возвращаем объект с telegramId и остальными данными
+      return {
+        telegramId: user.id,
+        firstName: user.first_name,
+        lastName: user.last_name,
+        username: user.username,
+        languageCode: user.language_code,
+        allowsWriteToPm: user.allows_write_to_pm,
+        photoUrl: user.photo_url,
+      };
     } catch (error) {
-      this.logger.error('Error parsing user data', error.stack);
+      this.logger.error('Error parsing user data', error.message);
       throw new ForbiddenException('Access Denied: Invalid user data');
     }
   }
 
-  async processUser(user: any) {
+  async processUser(user: CreateUserDto) {
     try {
-      const existingUser = await this.userService.findUserByTelegramId(user.id);
-
+      const existingUser = await this.userService.findUserByTelegramId(
+        user.telegramId,
+      );
       if (existingUser) {
-        this.logger.log(`User with id ${user.id} already exists`);
+        this.logger.log(
+          `User with telegramId ${user.telegramId} already exists`,
+        );
         return {
           success: true,
           message: 'User already exists',
@@ -76,26 +98,18 @@ export class TelegramService {
           tgId: existingUser.telegramId,
         };
       }
-
-      await this.userService.createUser({
-        id: user.id,
-        first_name: user.first_name,
-        last_name: user.last_name,
-        username: user.username,
-        language_code: user.language_code,
-        allows_write_to_pm: user.allows_write_to_pm,
-        photo_url: user.photo_url,
-      });
-
-      this.logger.log(`User with id ${user.id} created successfully`);
+      await this.userService.createUser(user);
+      this.logger.log(
+        `User with telegramId ${user.telegramId} created successfully`,
+      );
       return {
         success: true,
         message: 'User created successfully',
         username: user.username,
-        tgId: user.id,
+        tgId: user.telegramId,
       };
     } catch (error) {
-      this.logger.error('Error processing user', error.stack);
+      this.logger.error('Error processing user', error.message);
       throw new ForbiddenException(error.message || 'An error occurred');
     }
   }

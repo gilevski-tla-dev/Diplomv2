@@ -1,7 +1,13 @@
 import axios from "axios";
 
+const baseURL = import.meta.env.VITE_API_BASE_URL;
+
+if (!baseURL) {
+  throw new Error("VITE_API_BASE_URL не указан в .env");
+}
+
 const axiosInstance = axios.create({
-  baseURL: "https://6277-159-203-166-119.ngrok-free.app/api",
+  baseURL,
   headers: {
     "Content-Type": "application/json",
   },
