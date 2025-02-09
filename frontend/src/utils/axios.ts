@@ -1,11 +1,11 @@
 import axios from "axios";
-// const baseURL = "https://7566-159-203-166-119.ngrok-free.app/api";
+const baseURL = "https://fed1-159-203-166-119.ngrok-free.app/api";
 
-const baseURL = import.meta.env.VITE_API_BASE_URL;
+// const baseURL = import.meta.env.VITE_API_BASE_URL;
 
-if (!baseURL) {
-  throw new Error("VITE_API_BASE_URL не указан в .env");
-}
+// if (!baseURL) {
+//   throw new Error("VITE_API_BASE_URL не указан в .env");
+// }
 
 const axiosInstance = axios.create({
   baseURL,

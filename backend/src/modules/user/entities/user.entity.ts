@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Poll } from 'src/modules/poll/entities/poll.entity';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 
 @Entity()
 export class User {
@@ -25,4 +26,7 @@ export class User {
 
   @Column({ nullable: true })
   photoUrl: string | null;
+
+  @OneToMany(() => Poll, (poll) => poll.owner)
+  polls: Poll[]; // Связь с опросами
 }
